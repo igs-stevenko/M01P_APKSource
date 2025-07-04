@@ -19,6 +19,7 @@ import ViewCtrl.ViewCtrl;
 
 public class MainActivity extends AppCompatActivity {
 
+    /* Git 測試用 */
 
     private void init() {
         ViewCtrl.progressBar = findViewById(R.id.progressBar);
