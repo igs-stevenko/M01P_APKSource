@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/IGSText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Progress"
+        android:textSize="30sp"
+        android:textColor="#FFFFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:paddingStart="20dp"
+        android:gravity="start"
+        android:text="Updateing..."
+        android:textColor="#FFEB3B"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar"
+        tools:ignore="MissingConstraints" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="220dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="32dp"
+        android:progressDrawable="@drawable/progress"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/IGSText"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/PromptText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do not turn off this machine."
+        android:textSize="16sp"
+        android:layout_marginTop="2dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:gravity="start"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/Title"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
