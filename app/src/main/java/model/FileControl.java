@@ -75,7 +75,26 @@ public class FileControl {
         }
         return content.toString().replace("\n", "");
     }
+    public static int WriteStringToFile(String buffer, String filePath) {
 
+        int rtn = 0;
+
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), filePath);
+        file.setReadable(true);
+        file.setWritable(true);
+
+        try {
+            FileWriter filewrite = new FileWriter(filePath);
+            BufferedWriter writer = new BufferedWriter(filewrite);
+            writer.write(buffer);
+            writer.flush();
+
+        } catch (IOException e) {
+            rtn = -1;
+        }
+
+        return rtn;
+    }
     public static int Unzip(String zipFilePath, String destDirectory)  {
 
         int rtn = 0;
@@ -133,7 +152,12 @@ public class FileControl {
         }
         return rtn;
     }
+    public static void RemoveFile(String FilePath) {
 
+        File TargetFile = new File(FilePath);
+        TargetFile.delete();
+
+    }
     private static int deleteFolder(File folder) {
 
         boolean deletionStatus = true;

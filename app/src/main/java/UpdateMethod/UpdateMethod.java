@@ -3,6 +3,8 @@ package UpdateMethod;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
+
 import model.ApkControl;
 import model.Crypto;
 import model.FileControl;
@@ -116,7 +118,8 @@ public class UpdateMethod {
         if(InstallPkgName == null){
             return -1;
         }
-        //Log.d(TAGS, "InstallPkgName : " + InstallPkgName);
+
+        Log.d(TAGS, "InstallPkgName : " + InstallPkgName);
 
         int rtn = 0;
 
@@ -129,6 +132,19 @@ public class UpdateMethod {
 
         while(mApkControl.isAppInstalled(InstallPkgName) != true){
             Sleep(1000);
+        }
+
+        /* 看RelForLauncher.txt是否存在，若存在則刪掉，重新建立一個 */
+        if(FileControl.IsFileExist(GlobalVar.RelForLauncherFilePath) == true) {
+            FileControl.RemoveFile(GlobalVar.RelForLauncherFilePath);
+        }
+
+        Sleep(1000);
+
+        /* 寫入APP的Package Name到RelForLauncher.txt */
+        rtn = FileControl.WriteStringToFile(InstallPkgName,GlobalVar.RelForLauncherFilePath);
+        if(rtn != 0){
+            return -3;
         }
 
         return rtn;
@@ -175,6 +191,8 @@ public class UpdateMethod {
         return rtn;
 
     }
+
+
 
     private void Sleep(int mTime) {
         try {

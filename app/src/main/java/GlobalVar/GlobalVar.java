@@ -24,6 +24,8 @@ public class GlobalVar {
     public static final String Iv = "7f3e9d0a1b5c8e2f";
     public static int UpdateStatus;
 
+    public static final String RelForLauncherFilePath = "/data/media/RelForLauncher.txt";
+
     private static final Object lock = new Object();;
 
     public static void SetUpdateStatus(int status) {
