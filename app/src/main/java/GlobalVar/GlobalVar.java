@@ -17,12 +17,15 @@ public class GlobalVar {
     public static final String DEC_UPDATE_FILE_PATH = "/data/tmp/dec_update.zip";
     public static final String MEDIA_PATH = "/data/Media/";
     public static final String TMP_PATH = "/data/tmp/";
+    public static final String DATA_PATH = "/data/";
     public static final String RESOURCE_MEDIA_PATH = "/data/tmp/Resource/Media/";
-    public static final String RESOURCE_GAME_PATH =  "/data/tmp/Resource/game.apk";
+    public static final String RESOURCE_GAME_PATH =  "/data/game.apk";
 
     public static final String Key = "f2a8b0e7c9d34105";
     public static final String Iv = "7f3e9d0a1b5c8e2f";
     public static int UpdateStatus;
+
+    public static long UpdateFileLen = 0;
 
     public static final String RelForLauncherFilePath = "/data/media/RelForLauncher.txt";
 

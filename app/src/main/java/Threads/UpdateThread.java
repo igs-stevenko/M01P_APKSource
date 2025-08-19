@@ -2,6 +2,8 @@ package Threads;
 
 import android.content.Context;
 
+import java.io.IOException;
+
 import UpdateFlow.UpdateFlow;
 import UpdateMethod.UpdateMethod;
 
@@ -19,7 +21,11 @@ public class UpdateThread {
 
             @Override
             public void run() {
-                mUpdateFlow.GameUpdate();
+                try {
+                    mUpdateFlow.GameUpdate();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }).start();
     }

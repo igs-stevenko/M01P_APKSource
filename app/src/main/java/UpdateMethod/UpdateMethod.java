@@ -1,9 +1,13 @@
 package UpdateMethod;
 
 import android.content.Context;
+import android.system.ErrnoException;
+import android.system.Os;
+import android.system.OsConstants;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 
 import model.ApkControl;
 import model.Crypto;
@@ -18,6 +22,11 @@ public class UpdateMethod {
         sContext = mContext;
         mApkControl = new ApkControl(mContext);
     }
+
+    public void GetUpdateFileLen(){
+        GlobalVar.UpdateFileLen = FileControl.GetFileSize(GlobalVar.UPDATE_FILE_PATH);
+    }
+
 
     public int CheckGameFile() {
 
@@ -84,13 +93,24 @@ public class UpdateMethod {
         return rtn;
     }
 
-    public int UnzipGameFile() {
+    public int UnzipGameFile() throws IOException {
 
         int rtn = 0;
+        int mode = OsConstants.S_IRWXU | OsConstants.S_IRWXG | OsConstants.S_IRWXO;
 
-        rtn = FileControl.Unzip(GlobalVar.DEC_UPDATE_FILE_PATH, GlobalVar.TMP_PATH);
+        rtn = FileControl.UnzipWithoutFirstName(GlobalVar.DEC_UPDATE_FILE_PATH, GlobalVar.DATA_PATH);
         if(rtn < 0) {
+            Log.d(TAGS, "UnzipWithoutFirstName failed");
             return -1;
+        }
+
+        Log.d(TAGS, "chmod start");
+
+        try {
+            Os.chmod(GlobalVar.MEDIA_PATH, mode);
+        } catch (ErrnoException e) {
+            Log.d(TAGS, "chmod failed");
+            return -2;
         }
 
         Log.d(TAGS, "UnzipGameFile");
@@ -133,6 +153,8 @@ public class UpdateMethod {
         while(mApkControl.isAppInstalled(InstallPkgName) != true){
             Sleep(1000);
         }
+
+        FileControl.RemoveFile(Source);
 
         /* 看RelForLauncher.txt是否存在，若存在則刪掉，重新建立一個 */
         if(FileControl.IsFileExist(GlobalVar.RelForLauncherFilePath) == true) {

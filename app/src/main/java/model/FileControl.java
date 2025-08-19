@@ -140,6 +140,62 @@ public class FileControl {
         return rtn;
     }
 
+    public static int UnzipWithoutFirstName(String zipFilePath, String destDirectory) throws IOException {
+
+        int rtn = 0;
+
+        File destDir = new File(destDirectory);
+        if (!destDir.exists()) {
+            destDir.mkdir();
+        }
+
+        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry = zipInputStream.getNextEntry();
+
+            while (entry != null) {
+
+                String entryName = entry.getName();
+
+                /*新增*/
+                // 去掉第一層資料夾 (Resource/)
+                int firstSlash = entryName.indexOf('/');
+                if (firstSlash != -1) {
+                    entryName = entryName.substring(firstSlash + 1);
+                }
+
+                File entryFile = new File(destDirectory + File.separator + entryName);
+
+                Log.d(TAGS, "entryFile = " + entryFile.toString());
+
+                if (entry.isDirectory()) {
+                    entryFile.mkdirs();
+                } else {
+                    File parent = entryFile.getParentFile();
+                    if (parent != null && !parent.exists()) {
+                        parent.mkdirs();
+                    }
+
+                    FileOutputStream fos = new FileOutputStream(entryFile);
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = zipInputStream.read(buffer)) != -1) {
+                        fos.write(buffer, 0, bytesRead);
+                    }
+
+                    fos.flush();
+                    fos.getFD().sync();
+                }
+                zipInputStream.closeEntry();
+                entry = zipInputStream.getNextEntry();
+            }
+        } catch (IOException e) {
+            Log.d(TAGS, "Unzip IOException");
+            rtn = -1;
+        }
+
+        return rtn;
+    }
+
     public static int RemoveFolder(String folderPath) {
 
         int rtn = 0;
@@ -277,6 +333,14 @@ public class FileControl {
         }
 
         return rtn;
+    }
+
+    public static long GetFileSize(String FileName) {
+
+        File file = new File(FileName);
+
+        return file.length();
+
     }
 
     static String TAGS = "## [KO] FileControl";

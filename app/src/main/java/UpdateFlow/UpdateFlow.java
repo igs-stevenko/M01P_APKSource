@@ -3,9 +3,12 @@ package UpdateFlow;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.IOException;
+
 import GlobalVar.GlobalVar;
 import UpdateMethod.UpdateMethod;
 import ViewCtrl.ViewCtrl;
+import model.FileControl;
 
 public class UpdateFlow {
 
@@ -51,9 +54,24 @@ public class UpdateFlow {
 
     public void UpdateProgress(){
         int i = 0;
+        long TotalSpent = 0;
+        long SleepTime = 0;
+
+        /* 等待取到檔案長度 */
+        while(GlobalVar.UpdateFileLen == 0){
+            Sleep(500);
+        }
+
+        /* 算出總共需要幾秒 */
+        TotalSpent = GlobalVar.UpdateFileLen / 2500000;
+        SleepTime = (TotalSpent*1000) / 100;
+        if(SleepTime < 500) SleepTime = 100;
+
+        Log.d(TAGS, "SleepTime = " + SleepTime);
+
         while (true) {
 
-            Sleep(500);
+            Sleep((int)SleepTime);
             if(GlobalVar.GetUpdateStatus() == GlobalVar.UPDATE_SUCCESS){
                 i = 100;
                 ViewCtrl.SetupProgressBar(100);
@@ -61,8 +79,7 @@ public class UpdateFlow {
 
             }else if(GlobalVar.GetUpdateStatus() < 0){
                 break;
-            }
-            else if(i < 100) {
+            }else if(i < 100) {
                 ViewCtrl.SetupProgressBar(i);
             }
             else if(i >= 100) {
@@ -75,9 +92,11 @@ public class UpdateFlow {
             i++;
         }
     }
-    public void GameUpdate(){
+    public void GameUpdate() throws IOException {
 
         int rtn = 0;
+
+        mUpdateMethod.GetUpdateFileLen();
 
         GlobalVar.SetUpdateStatus(GlobalVar.UPDATE_START);
 
@@ -109,6 +128,7 @@ public class UpdateFlow {
             return;
         }
 
+
         Log.d(TAGS, "UnzipGameFile Start");
         rtn = mUpdateMethod.UnzipGameFile();
         if(rtn < 0){
@@ -116,12 +136,14 @@ public class UpdateFlow {
             return;
         }
 
+        /*
         Log.d(TAGS, "CopyToMedia Start");
         rtn = mUpdateMethod.CopyToMedia();
         if(rtn < 0){
             GlobalVar.SetUpdateStatus(GlobalVar.UPDATE_COPY_FAILED);
             return;
         }
+        */
 
         Log.d(TAGS, "ReinstallApp Start");
         rtn = mUpdateMethod.ReinstallApp(GlobalVar.RESOURCE_GAME_PATH);
