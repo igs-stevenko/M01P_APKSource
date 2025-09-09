@@ -11,9 +11,9 @@ public class GlobalVar {
     public static final int UPDATE_COPY_FAILED  = -6;
     public static final int UPDATE_INSTALL_APP_FAILED  = -7;
     public static final int UPDATE_RMDOWNLOAD_FAILED  = -8;
-    public static final String DOWNLOAD_PATH = "/data/download/update/";
-    public static final String UPDATE_FILE_PATH = "/data/download/update/update.zip";
-    public static final String UPDATE_MD5_PATH = "/data/download/update/info.txt";
+    public static final String DOWNLOAD_PATH = "/mnt/download/update/";
+    public static final String UPDATE_FILE_PATH = "/mnt/download/update/update.zip";
+    public static final String UPDATE_MD5_PATH = "/mnt/download/update/info.txt";
     public static final String DEC_UPDATE_FILE_PATH = "/data/tmp/dec_update.zip";
     public static final String MEDIA_PATH = "/data/Media/";
     public static final String TMP_PATH = "/data/tmp/";
