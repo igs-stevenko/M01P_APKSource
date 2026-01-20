@@ -6,7 +6,6 @@ import android.system.Os;
 import android.system.OsConstants;
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 
 import model.ApkControl;
@@ -128,6 +127,30 @@ public class UpdateMethod {
         if(rtn < 0) {
             return -1;
         }
+
+        return rtn;
+    }
+
+    public int CopyOTAData() {
+
+        int rtn = 0;
+        boolean FileExist;
+        FileExist = FileControl.IsFileExist(GlobalVar.DOWNLOAD_PATH + GlobalVar.OTA_DATA_PROP);
+        if (FileExist == true) {
+            rtn = FileControl.CopyFile(GlobalVar.DOWNLOAD_PATH + GlobalVar.OTA_DATA_PROP, GlobalVar.DATA_DOWNLOAD_PATH + GlobalVar.OTA_DATA_PROP);
+            if (rtn < 0) {
+                return -1;
+            }
+        }
+
+        FileExist = FileControl.IsFileExist(GlobalVar.DOWNLOAD_PATH + GlobalVar.OTA_DATA_XML);
+        if (FileExist == true) {
+            rtn = FileControl.CopyFile(GlobalVar.DOWNLOAD_PATH + GlobalVar.OTA_DATA_XML, GlobalVar.DATA_DOWNLOAD_PATH + GlobalVar.OTA_DATA_XML);
+            if (rtn < 0) {
+                return -1;
+            }
+        }
+
 
         return rtn;
     }

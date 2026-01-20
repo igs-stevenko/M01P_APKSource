@@ -145,6 +145,12 @@ public class UpdateFlow {
         }
         */
 
+        rtn = mUpdateMethod.CopyOTAData();
+        if(rtn < 0){
+            GlobalVar.SetUpdateStatus(GlobalVar.UPDATE_COPYOTADATA_FAILED);
+            return;
+        }
+
         Log.d(TAGS, "ReinstallApp Start");
         rtn = mUpdateMethod.ReinstallApp(GlobalVar.RESOURCE_GAME_PATH);
         if(rtn < 0){
