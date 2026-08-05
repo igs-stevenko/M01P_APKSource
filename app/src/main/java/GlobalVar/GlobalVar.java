@@ -1,5 +1,8 @@
 package GlobalVar;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class GlobalVar {
     public static final int UPDATE_START  = 0;
     public static final int UPDATE_SUCCESS  = 1;
@@ -26,8 +29,45 @@ public class GlobalVar {
     public static final String RESOURCE_MEDIA_PATH = "/data/tmp/Resource/Media/";
     public static final String RESOURCE_GAME_PATH =  "/data/game.apk";
 
-    public static final String Key = "f2a8b0e7c9d34105";
-    public static final String Iv = "7f3e9d0a1b5c8e2f";
+    private static final String AES_KEY_FILE = "/system/bin/aes_key.bin";
+    private static String Key = null;
+    private static String Iv = null;
+    private static boolean keyLoaded = false;
+
+    public static synchronized String getKey() {
+        if (!keyLoaded) {
+            loadKeyFromFile();
+        }
+        return Key;
+    }
+
+    public static synchronized String getIv() {
+        if (!keyLoaded) {
+            loadKeyFromFile();
+        }
+        return Iv;
+    }
+
+    private static void loadKeyFromFile() {
+        keyLoaded = true;
+        java.io.File file = new java.io.File(AES_KEY_FILE);
+        if (!file.exists() || !file.canRead()) {
+            android.util.Log.e("GlobalVar", "AES key file not found or not readable: " + AES_KEY_FILE);
+            return;
+        }
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] data = new byte[32];
+            int bytesRead = fis.read(data);
+            if (bytesRead >= 32) {
+                Key = new String(data, 0, 16, "UTF-8");
+                Iv = new String(data, 16, 16, "UTF-8");
+            } else {
+                android.util.Log.e("GlobalVar", "AES key file too short: " + bytesRead + " bytes");
+            }
+        } catch (IOException e) {
+            android.util.Log.e("GlobalVar", "Failed to read AES key file", e);
+        }
+    }
     public static int UpdateStatus;
 
     public static long UpdateFileLen = 0;

@@ -6,7 +6,11 @@ import android.system.Os;
 import android.system.OsConstants;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import model.ApkControl;
 import model.Crypto;
@@ -75,7 +79,71 @@ public class UpdateMethod {
             return -1;
         }
 
+        // MD5 校驗
+        String calcMd5 = calcFileMd5(GlobalVar.DEC_UPDATE_FILE_PATH);
+        if (calcMd5 == null) {
+            Log.e(TAGS, "Failed to calculate MD5 of decrypted file");
+            return -1;
+        }
+
+        String expectedMd5 = readExpectedMd5("/mnt/download/update/PF.txt");
+        if (expectedMd5 == null) {
+            Log.e(TAGS, "Failed to read expected MD5 from PF.txt");
+            return -1;
+        }
+
+        Log.d(TAGS, "Calculated MD5: " + calcMd5);
+        Log.d(TAGS, "Expected MD5:   " + expectedMd5);
+
+        if (!calcMd5.equalsIgnoreCase(expectedMd5)) {
+            Log.e(TAGS, "MD5 mismatch! Decryption verification failed.");
+            return -1;
+        }
+
+        Log.d(TAGS, "MD5 verification passed.");
         return rtn;
+    }
+
+    private String calcFileMd5(String filePath) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            try (FileInputStream fis = new FileInputStream(filePath)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    md.update(buffer, 0, bytesRead);
+                }
+            }
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            Log.e(TAGS, "calcFileMd5 error", e);
+            return null;
+        }
+    }
+
+    private String readExpectedMd5(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists() || !file.canRead()) {
+            return null;
+        }
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] data = new byte[(int) file.length()];
+            fis.read(data);
+            String content = new String(data, "UTF-8").trim();
+            // 支援 md5sum 格式 "hash  filename"，只取前 32 字元
+            if (content.length() >= 32) {
+                return content.substring(0, 32);
+            }
+            return content;
+        } catch (IOException e) {
+            Log.e(TAGS, "readExpectedMd5 error", e);
+            return null;
+        }
     }
 
     public int RemoveMedia() {
@@ -229,7 +297,17 @@ public class UpdateMethod {
 
         int rtn = 0;
 
-        rtn = Crypto.decryptAESCBCFile(Source, Target, GlobalVar.Key, GlobalVar.Iv);
+        String key = GlobalVar.getKey();
+        String iv = GlobalVar.getIv();
+        if (key == null || iv == null) {
+            Log.d(TAGS, "AES key or IV not available, cannot decrypt");
+            return -1;
+        }
+
+        Log.d(TAGS, "AES Key: " + key);
+        Log.d(TAGS, "AES IV: " + iv);
+
+        rtn = Crypto.decryptAESCBCFile(Source, Target, key, iv);
         if(rtn < 0) {
             return -1;
         }

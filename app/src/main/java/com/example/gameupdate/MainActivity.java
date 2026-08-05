@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
         ViewCtrl.ProgressText = (TextView) findViewById(R.id.IGSText);
         ViewCtrl.TitleText = (TextView) findViewById(R.id.Title);
         ViewCtrl.PromptText = (TextView) findViewById(R.id.PromptText);
+
+        TextView versionText = (TextView) findViewById(R.id.VersionText);
+        versionText.setText("V2.0");
     }
 
     @Override
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         new ProgressThread(this).Start();
         new TextUpdateThread(this).Start();
 
-        Log.d(TAGS, "GameUpdate V1.8");
+        Log.d(TAGS, "GameUpdate V2.0");
     }
     static String TAGS = "## [KO] MainActivity";
 }
