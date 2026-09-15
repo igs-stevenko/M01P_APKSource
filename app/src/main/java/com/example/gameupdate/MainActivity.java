@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         ViewCtrl.PromptText = (TextView) findViewById(R.id.PromptText);
 
         TextView versionText = (TextView) findViewById(R.id.VersionText);
-        versionText.setText("V2.0");
+        versionText.setText("V2.4");
     }
 
     @Override
