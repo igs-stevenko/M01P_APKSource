@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         new ProgressThread(this).Start();
         new TextUpdateThread(this).Start();
 
-        Log.d(TAGS, "GameUpdate V2.0");
+        Log.d(TAGS, "GameUpdate V2.4");
     }
     static String TAGS = "## [KO] MainActivity";
 }

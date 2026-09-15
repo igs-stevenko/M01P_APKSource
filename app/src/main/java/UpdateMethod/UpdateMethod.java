@@ -297,6 +297,18 @@ public class UpdateMethod {
 
         int rtn = 0;
 
+        // 優先使用 KEK 架構解密 (OTP KEY2 解密 AES key + 軟體解密檔案)
+        Log.d(TAGS, "Trying KEK decryption (OTP KEY2 + software AES)...");
+        rtn = Crypto.decryptWithKEK(Source, Target);
+        
+        if (rtn == 0) {
+            Log.d(TAGS, "KEK decryption success");
+            return 0;
+        }
+        
+        Log.d(TAGS, "KEK decryption failed: " + rtn + ", falling back to software decryption");
+        
+        // 備援：軟體解密 (開發/測試用)
         String key = GlobalVar.getKey();
         String iv = GlobalVar.getIv();
         if (key == null || iv == null) {
@@ -304,9 +316,7 @@ public class UpdateMethod {
             return -1;
         }
 
-        Log.d(TAGS, "AES Key: " + key);
-        Log.d(TAGS, "AES IV: " + iv);
-
+        Log.d(TAGS, "Using software decryption (fallback)");
         rtn = Crypto.decryptAESCBCFile(Source, Target, key, iv);
         if(rtn < 0) {
             return -1;
